@@ -1,0 +1,140 @@
+/* Container */
+.excel-container {
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f8fafc;
+}
+
+/* Title */
+.excel-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+/* Toolbar */
+.excel-toolbar {
+  background: #ffffff;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 12px;
+}
+
+.excel-toolbar form {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.excel-toolbar input {
+  padding: 4px 6px;
+  border: 1px solid #9ca3af;
+  font-size: 13px;
+}
+
+.excel-toolbar button {
+  padding: 5px 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.excel-toolbar button:hover {
+  background: #1d4ed8;
+}
+.cell-input {
+  width: 100%;
+  border: 1px solid #2563eb;
+  padding: 4px;
+  font-size: 13px;
+}
+
+.cell-input.num {
+  text-align: right;
+}
+/* Table */
+.excel-table {
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #d1d5db;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  background: #e5e7eb;
+}
+
+th,
+td {
+  border: 1px solid #d1d5db;
+  padding: 6px;
+  text-align: center;
+}
+
+.text {
+  text-align: left;
+}
+
+.num {
+  text-align: right;
+}
+
+/* Status */
+.ok {
+  color: green;
+  font-weight: bold;
+}
+
+.no {
+  color: red;
+  font-weight: bold;
+}
+
+/* Footer */
+tfoot td {
+  font-weight: bold;
+  background: #f1f5f9;
+}
+/* =========================
+   PRINT FRIENDLY STYLES
+   ========================= */
+@media print {
+  body {
+    background: white;
+  }
+
+  .excel-container {
+    padding: 0;
+  }
+
+  /* Hide form & buttons when printing */
+  .excel-toolbar {
+    display: none;
+  }
+
+  .excel-title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  th,
+  td {
+    padding: 4px;
+  }
+
+  tfoot td {
+    background: #e5e7eb !important;
+  }
+}

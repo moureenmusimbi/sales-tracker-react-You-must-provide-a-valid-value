@@ -1,0 +1,71 @@
+.excel-container {
+  width: 100%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.excel-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.excel-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.excel-form button {
+  background: #1e3a8a; /* corporate blue */
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.excel-form button:hover {
+  background: #162a66;
+}
+
+.excel-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.excel-table th,
+.excel-table td {
+  border: 1px solid #ccc;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.excel-table th {
+  background: #f1f5f9;
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.excel-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.excel-table tbody tr:hover {
+  background: #e0f2fe;
+  transition: 0.2s;
+}
+
+.excel-table tfoot th {
+  background: #dbeafe;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.excel-table td.unsold {
+  color: red;
+  font-weight: bold;
+}
