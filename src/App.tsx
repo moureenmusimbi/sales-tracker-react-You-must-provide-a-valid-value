@@ -4,22 +4,14 @@ import {
   collection,
   addDoc,
   onSnapshot,
-  Timestamp,
+  // Timestamp,
   doc,
   updateDoc,
 } from "firebase/firestore";
 import "./App.css";
+import type { SaleData } from "./types/SaleData";
 
-export type SaleData = {
-  id?: string;
-  product: string;
-  givenTo: string;
-  salesMade: number;
-  salesNotMade: number;
-  totalReceived: number;
-  targetExpected: number;
-  date: Timestamp;
-};
+
 
 type SaleForm = {
   product: string;
@@ -52,31 +44,34 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(salesCollection, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        ...(doc.data() as SaleData),
-        id: doc.id,
+      const data: SaleData[] = snapshot.docs.map((d) => ({
+        ...(d.data() as SaleData),
+        id: d.id,
       }));
       setSales(data);
     });
-    return () => unsubscribe();
+
+    return unsubscribe;
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
+
+    setForm((prev) => ({
+      ...prev,
       [name]:
         name === "product" || name === "givenTo" || name === "date"
           ? value
           : Number(value),
-    });
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     await addDoc(salesCollection, {
       ...form,
-      date: Timestamp.fromDate(new Date(form.date)),
+      // date: Timestamp.fromDate(new Date(form.date)),
     });
   };
 
@@ -86,21 +81,23 @@ export default function App() {
     value: string
   ) => {
     const ref = doc(db, "sales", id);
-    const parsed =
+
+    const parsedValue =
       field === "product" || field === "givenTo"
         ? value
         : Number(value);
 
-    await updateDoc(ref, { [field]: parsed });
+    await updateDoc(ref, { [field]: parsedValue });
     setEditing(null);
   };
 
-  const formatDate = (ts: Timestamp) => {
-    const d = ts.toDate();
-    return `${String(d.getDate()).padStart(2, "0")}/${String(
-      d.getMonth() + 1
-    ).padStart(2, "0")}/${d.getFullYear()}`;
-  };
+ const formatDate = (dateStr: string) => {
+  const d = new Date(dateStr);
+
+  return `${String(d.getDate()).padStart(2, "0")}/${String(
+    d.getMonth() + 1
+  ).padStart(2, "0")}/${d.getFullYear()}`;
+};
 
   const totalReceived = sales.reduce(
     (sum, s) => sum + s.totalReceived,
@@ -113,13 +110,46 @@ export default function App() {
 
       <div className="excel-toolbar">
         <form onSubmit={handleSubmit}>
-          <input type="date" name="date" value={form.date} onChange={handleChange} />
-          <input name="product" placeholder="Product" onChange={handleChange} />
-          <input name="givenTo" placeholder="Given To" onChange={handleChange} />
-          <input type="number" name="salesMade" placeholder="Sales Made" onChange={handleChange} />
-          <input type="number" name="salesNotMade" placeholder="Sales Not Made" onChange={handleChange} />
-          <input type="number" name="targetExpected" placeholder="Target" onChange={handleChange} />
-          <input type="number" name="totalReceived" placeholder="Received" onChange={handleChange} />
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+          />
+          <input
+            name="product"
+            placeholder="Product"
+            onChange={handleChange}
+          />
+          <input
+            name="givenTo"
+            placeholder="Given To"
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="salesMade"
+            placeholder="Sales Made"
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="salesNotMade"
+            placeholder="Sales Not Made"
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="targetExpected"
+            placeholder="Target"
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="totalReceived"
+            placeholder="Received"
+            onChange={handleChange}
+          />
           <button type="submit">➕ Add</button>
         </form>
       </div>
@@ -145,19 +175,23 @@ export default function App() {
 
               const renderCell = (
                 field: keyof SaleData,
-                value: any,
+                value: string | number,
                 align = ""
-              ) =>
-                editing?.id === s.id && editing.field === field ? (
-                  <input
-                    autoFocus
-                    defaultValue={value}
-                    className={`cell-input ${align}`}
-                    onBlur={(e) =>
-                      handleCellUpdate(s.id!, field, e.target.value)
-                    }
-                  />
-                ) : (
+              ) => {
+                if (editing && editing.id === s.id && editing.field === field) {
+                  return (
+                    <input
+                      autoFocus
+                      defaultValue={String(value)}
+                      className={`cell-input ${align}`}
+                      onBlur={(e) =>
+                        handleCellUpdate(s.id!, field, e.target.value)
+                      }
+                    />
+                  );
+                }
+
+                return (
                   <span
                     onClick={() =>
                       setEditing({ id: s.id!, field })
@@ -166,17 +200,28 @@ export default function App() {
                     {value}
                   </span>
                 );
+              };
 
               return (
                 <tr key={s.id}>
                   <td>{formatDate(s.date)}</td>
                   <td className="text">{renderCell("product", s.product)}</td>
                   <td className="text">{renderCell("givenTo", s.givenTo)}</td>
-                  <td className="num">{renderCell("salesMade", s.salesMade, "num")}</td>
-                  <td className="num">{renderCell("salesNotMade", s.salesNotMade, "num")}</td>
-                  <td className="num">{renderCell("targetExpected", s.targetExpected, "num")}</td>
-                  <td className="num">{renderCell("totalReceived", s.totalReceived, "num")}</td>
-                  <td className={met ? "ok" : "no"}>{met ? "✔" : "✖"}</td>
+                  <td className="num">
+                    {renderCell("salesMade", s.salesMade, "num")}
+                  </td>
+                  <td className="num">
+                    {renderCell("salesNotMade", s.salesNotMade, "num")}
+                  </td>
+                  <td className="num">
+                    {renderCell("targetExpected", s.targetExpected, "num")}
+                  </td>
+                  <td className="num">
+                    {renderCell("totalReceived", s.totalReceived, "num")}
+                  </td>
+                  <td className={met ? "ok" : "no"}>
+                    {met ? "✔" : "✖"}
+                  </td>
                 </tr>
               );
             })}

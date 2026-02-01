@@ -1,24 +1,25 @@
-import { Sale } from "./SalesTable";
+import type { SaleData } from "../types/SaleData";
 
-export default function Summary({ sales }: { sales: Sale[] }) {
-  const monthly: Record<string, number> = {};
+type Props = {
+  sales: SaleData[];
+};
 
-  sales.forEach(s => {
-    const m = new Date(s.date).toLocaleString("default", { month: "long" });
-    monthly[m] = (monthly[m] || 0) + s.amount;
+export default function Summary({ sales }: Props) {
+  const monthlyTotals: Record<string, number> = {};
+
+  sales.forEach((s) => {
+    monthlyTotals[s.month] =
+      (monthlyTotals[s.month] || 0) + s.salesMade;
   });
 
-  const yearly = Object.values(monthly).reduce((a, b) => a + b, 0);
-
   return (
-    <div className="summary">
-      <h3>Monthly Totals</h3>
-      <div className="months">
-        {Object.entries(monthly).map(([m, v]) => (
-          <div key={m}>{m}: <strong>{v}</strong></div>
-        ))}
-      </div>
-      <h2>Yearly Total: {yearly}</h2>
+    <div>
+      <h3>Monthly Summary</h3>
+      {Object.entries(monthlyTotals).map(([month, total]) => (
+        <p key={month}>
+          {month}: {total}
+        </p>
+      ))}
     </div>
   );
 }
