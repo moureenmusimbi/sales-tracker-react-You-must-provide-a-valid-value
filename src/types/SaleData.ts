@@ -4,9 +4,6 @@ export type SaleData = {
   givenTo: string;
   salesMade: number;
   salesNotMade: number;
-  salesTarget: number;
-  totalReceived: number;
-  targetExpected: number;
-  date: string;   // YYYY-MM-DD
-  month: string;  // e.g. "2026-02"
+  salesTarget: number; // ✅ single source of truth
+  month: string;
 };
