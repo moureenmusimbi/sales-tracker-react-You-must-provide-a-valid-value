@@ -4,14 +4,12 @@ import {
   collection,
   addDoc,
   onSnapshot,
-  // Timestamp,
+  Timestamp,
   doc,
   updateDoc,
 } from "firebase/firestore";
 import "./App.css";
 import type { SaleData } from "./types/SaleData";
-
-
 
 type SaleForm = {
   product: string;
@@ -20,7 +18,7 @@ type SaleForm = {
   salesNotMade: number;
   totalReceived: number;
   targetExpected: number;
-  date: string;
+  date: string; // string for input, converted to Timestamp when saving
 };
 
 export default function App() {
@@ -37,11 +35,12 @@ export default function App() {
     salesNotMade: 0,
     totalReceived: 0,
     targetExpected: 0,
-    date: new Date().toISOString().split("T")[0],
+    date: new Date().toISOString().split("T")[0], // YYYY-MM-DD for input
   });
 
   const salesCollection = collection(db, "sales");
 
+  // Load sales from Firestore
   useEffect(() => {
     const unsubscribe = onSnapshot(salesCollection, (snapshot) => {
       const data: SaleData[] = snapshot.docs.map((d) => ({
@@ -54,9 +53,9 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]:
@@ -66,15 +65,25 @@ export default function App() {
     }));
   };
 
+  // Submit new sale
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     await addDoc(salesCollection, {
       ...form,
-      // date: Timestamp.fromDate(new Date(form.date)),
+      date: Timestamp.fromDate(new Date(form.date)), // Save as Firestore Timestamp
+    });
+    setForm({
+      product: "",
+      givenTo: "",
+      salesMade: 0,
+      salesNotMade: 0,
+      totalReceived: 0,
+      targetExpected: 0,
+      date: new Date().toISOString().split("T")[0],
     });
   };
 
+  // Inline cell editing
   const handleCellUpdate = async (
     id: string,
     field: keyof SaleData,
@@ -91,22 +100,20 @@ export default function App() {
     setEditing(null);
   };
 
- const formatDate = (dateStr: string) => {
-  const d = new Date(dateStr);
+  // Format Firestore Timestamp to DD/MM/YYYY
+  const formatDate = (ts: Timestamp) => {
+    const d = ts.toDate();
+    return `${String(d.getDate()).padStart(2, "0")}/${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}/${d.getFullYear()}`;
+  };
 
-  return `${String(d.getDate()).padStart(2, "0")}/${String(
-    d.getMonth() + 1
-  ).padStart(2, "0")}/${d.getFullYear()}`;
-};
-
-  const totalReceived = sales.reduce(
-    (sum, s) => sum + s.totalReceived,
-    0
-  );
+  // Calculate total received
+  const totalReceived = sales.reduce((sum, s) => sum + s.totalReceived, 0);
 
   return (
     <div className="excel-container">
-      <h1 className="excel-title">📊 Sales for the Whole Year</h1>
+      <h1 className="excel-title">📊 Monthly Sales Tracker</h1>
 
       <div className="excel-toolbar">
         <form onSubmit={handleSubmit}>
@@ -119,35 +126,41 @@ export default function App() {
           <input
             name="product"
             placeholder="Product"
+            value={form.product}
             onChange={handleChange}
           />
           <input
             name="givenTo"
             placeholder="Given To"
+            value={form.givenTo}
             onChange={handleChange}
           />
           <input
             type="number"
             name="salesMade"
             placeholder="Sales Made"
+            value={form.salesMade}
             onChange={handleChange}
           />
           <input
             type="number"
             name="salesNotMade"
             placeholder="Sales Not Made"
+            value={form.salesNotMade}
             onChange={handleChange}
           />
           <input
             type="number"
             name="targetExpected"
             placeholder="Target"
+            value={form.targetExpected}
             onChange={handleChange}
           />
           <input
             type="number"
             name="totalReceived"
             placeholder="Received"
+            value={form.totalReceived}
             onChange={handleChange}
           />
           <button type="submit">➕ Add</button>
@@ -192,11 +205,7 @@ export default function App() {
                 }
 
                 return (
-                  <span
-                    onClick={() =>
-                      setEditing({ id: s.id!, field })
-                    }
-                  >
+                  <span onClick={() => setEditing({ id: s.id!, field })}>
                     {value}
                   </span>
                 );
@@ -207,21 +216,11 @@ export default function App() {
                   <td>{formatDate(s.date)}</td>
                   <td className="text">{renderCell("product", s.product)}</td>
                   <td className="text">{renderCell("givenTo", s.givenTo)}</td>
-                  <td className="num">
-                    {renderCell("salesMade", s.salesMade, "num")}
-                  </td>
-                  <td className="num">
-                    {renderCell("salesNotMade", s.salesNotMade, "num")}
-                  </td>
-                  <td className="num">
-                    {renderCell("targetExpected", s.targetExpected, "num")}
-                  </td>
-                  <td className="num">
-                    {renderCell("totalReceived", s.totalReceived, "num")}
-                  </td>
-                  <td className={met ? "ok" : "no"}>
-                    {met ? "✔" : "✖"}
-                  </td>
+                  <td className="num">{renderCell("salesMade", s.salesMade, "num")}</td>
+                  <td className="num">{renderCell("salesNotMade", s.salesNotMade, "num")}</td>
+                  <td className="num">{renderCell("targetExpected", s.targetExpected, "num")}</td>
+                  <td className="num">{renderCell("totalReceived", s.totalReceived, "num")}</td>
+                  <td className={met ? "ok" : "no"}>{met ? "✔" : "✖"}</td>
                 </tr>
               );
             })}
