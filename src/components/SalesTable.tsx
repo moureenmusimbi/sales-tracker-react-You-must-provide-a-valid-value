@@ -1,10 +1,10 @@
-import { Timestamp, doc, updateDoc } from "firebase/firestore";
+import { Timestamp, doc, updateDoc, CollectionReference } from "firebase/firestore";
 import { useState } from "react";
 import type { SaleData } from "../types/SaleData";
 
 type Props = {
   sales: SaleData[];
-  dbCollection: any;
+  dbCollection: CollectionReference;
 };
 
 export default function SalesTable({ sales, dbCollection }: Props) {
@@ -31,16 +31,30 @@ export default function SalesTable({ sales, dbCollection }: Props) {
 
   const renderCell = (s: SaleData, field: keyof SaleData) => {
     const value = s[field];
+
     if (editing && editing.id === s.id && editing.field === field) {
       return (
         <input
           autoFocus
-          defaultValue={field === "date" ? value.toDate().toISOString().split("T")[0] : String(value)}
+          defaultValue={
+            field === "date" && value instanceof Timestamp
+              ? value.toDate().toISOString().split("T")[0]
+              : String(value)
+          }
           onBlur={(e) => handleCellUpdate(s.id, field, e.target.value)}
         />
       );
     }
-    return <span onClick={() => setEditing({ id: s.id, field })}>{field === "date" ? formatDate(value as Timestamp) : value}</span>;
+
+    // Ensure value is renderable in JSX
+    let displayValue: string | number = "";
+    if (field === "date" && value instanceof Timestamp) {
+      displayValue = formatDate(value);
+    } else if (typeof value === "string" || typeof value === "number") {
+      displayValue = value;
+    }
+
+    return <span onClick={() => setEditing({ id: s.id, field })}>{displayValue}</span>;
   };
 
   return (

@@ -1,25 +1,36 @@
 import type { SaleData } from "../types/SaleData";
+import { Timestamp } from "firebase/firestore";
 
-type Props = {
+type SummaryProps = {
   sales: SaleData[];
 };
 
-export default function Summary({ sales }: Props) {
+// Helper to get month name from Timestamp
+const getMonthName = (ts: Timestamp) => {
+  const d = ts.toDate();
+  return d.toLocaleString("default", { month: "short" }); // e.g., "Jan", "Feb"
+};
+
+export default function Summary({ sales }: SummaryProps) {
   const monthlyTotals: Record<string, number> = {};
 
   sales.forEach((s) => {
-    monthlyTotals[s.month] =
-      (monthlyTotals[s.month] || 0) + s.salesMade;
+    if (!(s.date instanceof Timestamp)) return; // skip invalid dates
+
+    const month = getMonthName(s.date);
+    monthlyTotals[month] = (monthlyTotals[month] || 0) + s.salesMade;
   });
 
   return (
-    <div>
-      <h3>Monthly Summary</h3>
-      {Object.entries(monthlyTotals).map(([month, total]) => (
-        <p key={month}>
-          {month}: {total}
-        </p>
-      ))}
+    <div className="summary">
+      <h2>📅 Monthly Sales Summary</h2>
+      <ul>
+        {Object.entries(monthlyTotals).map(([month, total]) => (
+          <li key={month}>
+            {month}: {total} sales
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

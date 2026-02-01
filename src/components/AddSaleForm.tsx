@@ -14,20 +14,8 @@ export default function AddSaleForm({ onAdd }: Props) {
     salesNotMade: 0,
     targetExpected: 0,
     totalReceived: 0,
-    date: Timestamp.now(),
+    date: Timestamp.fromDate(new Date()),
   });
-
-  const handleChange = (key: keyof typeof form, value: string) => {
-    setForm({
-      ...form,
-      [key]:
-        key === "product" || key === "givenTo"
-          ? value
-          : key === "date"
-          ? Timestamp.fromDate(new Date(value))
-          : Number(value),
-    });
-  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +27,19 @@ export default function AddSaleForm({ onAdd }: Props) {
       salesNotMade: 0,
       targetExpected: 0,
       totalReceived: 0,
-      date: Timestamp.now(),
+      date: Timestamp.fromDate(new Date()),
+    });
+  };
+
+  const handleChange = (key: keyof typeof form, value: string) => {
+    setForm({
+      ...form,
+      [key]:
+        key === "product" || key === "givenTo"
+          ? value
+          : key === "date"
+          ? Timestamp.fromDate(new Date(value))
+          : Number(value),
     });
   };
 
