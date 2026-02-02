@@ -15,11 +15,21 @@ export default function AddSaleForm({ onAdd }: Props) {
     targetExpected: 0,
     totalReceived: 0,
     date: Timestamp.fromDate(new Date()),
+    result: "Not Achieved", // ✅ Add the required property
   });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onAdd(form);
+
+    // Update the result before sending
+    const formWithResult: Omit<SaleData, "id"> = {
+      ...form,
+      result: form.salesMade >= form.targetExpected ? "Achieved" : "Not Achieved",
+    };
+
+    await onAdd(formWithResult);
+
+    // Reset form
     setForm({
       product: "",
       givenTo: "",
@@ -28,6 +38,7 @@ export default function AddSaleForm({ onAdd }: Props) {
       targetExpected: 0,
       totalReceived: 0,
       date: Timestamp.fromDate(new Date()),
+      result: "Not Achieved", // ✅ Reset with default
     });
   };
 
