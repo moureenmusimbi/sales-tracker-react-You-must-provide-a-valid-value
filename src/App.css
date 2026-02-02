@@ -1,3 +1,66 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
+
+.excel-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+form input,
+form button {
+  margin: 4px;
+  padding: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background: #3184e1;
+  color: white;
+}
+
+.ok {
+  color: green;
+  font-weight: bold;
+}
+
+.no {
+  color: red;
+  font-weight: bold;
+}
+
+.totals-box {
+  background: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 5px solid #2792d5;
+}
+
+/* PRINT */
+@media print {
+  button,
+  input {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+}
 /* Container */
 .excel-container {
   padding: 20px;
@@ -10,7 +73,7 @@
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 12px;
-  color: #1e293b;
+  color: #2bb8eb;
 }
 
 /* Toolbar */
@@ -29,7 +92,7 @@
 
 .excel-toolbar input {
   padding: 4px 6px;
-  border: 1px solid #9ca3af;
+  border: 1px solid #3098f9;
   font-size: 13px;
 }
 
@@ -136,5 +199,224 @@ tfoot td {
 
   tfoot td {
     background: #e5e7eb !important;
+  }
+}
+/* ==========================
+   MEDIA QUERIES
+   ========================== */
+
+/* Small phones (≤480px) */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .totals-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  table th,
+  table td {
+    padding: 4px 3px;
+    font-size: 11px;
+  }
+
+  button,
+  input {
+    padding: 6px 8px;
+  }
+}
+
+/* Medium phones / large phones (≤600px) */
+@media (max-width: 600px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    font-size: 12px;
+  }
+}
+
+/* Tablets (≤900px) */
+@media (max-width: 900px) {
+  .totals-box {
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  form {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  table th,
+  table td {
+    padding: 6px 4px;
+  }
+}
+
+/* Laptops / small desktops (≤1200px) */
+@media (max-width: 1200px) {
+  .excel-container {
+    padding: 20px;
+    margin: 30px auto;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  table th,
+  table td {
+    padding: 8px 6px;
+  }
+}
+
+/* Large desktops (>1200px) */
+@media (min-width: 1201px) {
+  .excel-container {
+    padding: 25px;
+  }
+}
+
+/* ==========================
+   PRINT
+   ========================== */
+@media print {
+  button,
+  input {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+
+  .excel-container {
+    padding: 0;
+  }
+
+  table th,/* ==========================
+   MEDIA QUERIES
+   ========================== */
+
+/* Small phones (≤480px) */
+@media (max-width: 480px) {
+    h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .totals-box {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    form {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    table th,
+    table td {
+      padding: 4px 3px;
+      font-size: 11px;
+    }
+
+    button,
+    input {
+      padding: 6px 8px;
+    }
+  }
+
+  /* Medium phones / large phones (≤600px) */
+  @media (max-width: 600px) {
+    form {
+      grid-template-columns: 1fr;
+    }
+
+    table {
+      font-size: 12px;
+    }
+  }
+
+  /* Tablets (≤900px) */
+  @media (max-width: 900px) {
+    .totals-box {
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    form {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    table th,
+    table td {
+      padding: 6px 4px;
+    }
+  }
+
+  /* Laptops / small desktops (≤1200px) */
+  @media (max-width: 1200px) {
+    .excel-container {
+      padding: 20px;
+      margin: 30px auto;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    table th,
+    table td {
+      padding: 8px 6px;
+    }
+  }
+
+  /* Large desktops (>1200px) */
+  @media (min-width: 1201px) {
+    .excel-container {
+      padding: 25px;
+    }
+  }
+
+  /* ==========================
+   PRINT
+   ========================== */
+  @media print {
+    button,
+    input {
+      display: none;
+    }
+
+    body {
+      background: white;
+    }
+
+    .excel-container {
+      padding: 0;
+    }
+
+    table th,
+    table td {
+      padding: 4px;
+      font-size: 11px;
+    }
+  }
+  table td {
+    padding: 4px;
+    font-size: 11px;
   }
 }
